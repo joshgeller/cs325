@@ -10,11 +10,11 @@ def load_problems():
 
     """
     problems = []
-    with open('tests/MSS_Problems.txt') as f:
+    with open('tests/MSS_TestProblems.txt') as f:
         for line in f:
-            line = line.replace('[', '').replace(']', '').replace(',', '')
+            line = line.replace('[', '').replace(']', '').replace(' ', '')
             problems.append(
-                [int(num) for num in line.split(' ') if num not in ' \n'])
+                [int(num) for num in line.split(',') if num not in '\n'])
     return problems
 
 def write_results(filename, original_array, max_subarray, max_sum):
