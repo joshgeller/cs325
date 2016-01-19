@@ -7,10 +7,9 @@ def load_problems():
     :return: array of arrays containing integers, e.g.
 
     [[1,2,3],[4,5,6],[7,8,9]]
-
     """
     problems = []
-    with open('tests/MSS_TestProblems.txt') as f:
+    with open('tests/MSS_Problems.txt') as f:
         for line in f:
             line = line.replace('[', '').replace(']', '').replace(' ', '')
             problems.append(

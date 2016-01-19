@@ -57,7 +57,7 @@ def divide_and_conquer_find_max_subarray(array, low, high):
 
     # recursive case: >1 element in array
     else:
-        mid = floor((low + high) / 2)
+        mid = int(floor((low + high) / 2))
 
         # recursive sub-problems
 
@@ -91,7 +91,7 @@ if __name__ == '__main__':
                                                        low=0,
                                                        high=len(problem) - 1)
         write_results(
-            filename='divide_and_conquer_results.txt',
+            filename='MSS_Results.txt',
             original_array=problem,
             max_subarray=problem[results[0]:results[1] + 1],
             max_sum=results[2]
