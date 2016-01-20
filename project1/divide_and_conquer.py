@@ -2,44 +2,6 @@ from utils import load_problems, write_results
 from math import floor
 
 
-def find_max_crossing_subarray(array, low, mid, high):
-    """
-    Based on pseudocode in Introduction to Algorithms, 3rd edition
-
-    O(n) utility function to find the maximum sub-array crossing the midpoint in
-    a sub-array size A[low..high].
-
-    :return: tuple containing indices of a max subarray that crosses the
-    midpoint, as well as the sum of the values in the max sub-array.
-    """
-
-    # calculate index boundary and sum of left max sub-array
-
-    left_sum = float("-inf")
-    max_left = None
-    max_subarray_sum = 0
-
-    for i in range(mid, low - 1, -1):
-        max_subarray_sum += array[i]
-        if max_subarray_sum > left_sum:
-            left_sum = max_subarray_sum
-            max_left = i
-
-    # calculate index boundary and sum of right max sub-array
-
-    right_sum = float("-inf")
-    max_right = None
-    max_subarray_sum = 0
-
-    for i in range(mid + 1, high + 1):
-        max_subarray_sum += array[i]
-        if max_subarray_sum > right_sum:
-            right_sum = max_subarray_sum
-            max_right = i
-
-    return max_left, max_right, left_sum + right_sum
-
-
 def divide_and_conquer_find_max_subarray(array, low, high):
     """
     Based on pseudocode in Introduction to Algorithms, 3rd edition
@@ -57,19 +19,44 @@ def divide_and_conquer_find_max_subarray(array, low, high):
 
     # recursive case: >1 element in array
     else:
+        # calculate midpoint of sub-array
         mid = int(floor((low + high) / 2))
 
-        # recursive sub-problems
-
+        # recursive sub-problem: left-array
         left_low, left_high, left_sum = \
             divide_and_conquer_find_max_subarray(array, low, mid)
 
+        # recursive sub-problem: right-array
         right_low, right_high, right_sum = \
             divide_and_conquer_find_max_subarray(array, mid + 1, high)
 
-        # crossing sub-problem
-        cross_low, cross_high, cross_sum = \
-            find_max_crossing_subarray(array, low, mid, high)
+        # crossing sub-problem: find the index bounds and sum of the maximum
+        # sub-array crossing the midpoint of array[low..high]
+
+        left_sum = float("-inf")
+        max_left = None
+        max_subarray_sum = 0
+
+        # work from mid->low to find the maximum sub-array on the left side
+        for i in range(mid, low - 1, -1):
+            max_subarray_sum += array[i]
+            if max_subarray_sum > left_sum:
+                left_sum = max_subarray_sum
+                max_left = i
+
+        right_sum = float("-inf")
+        max_right = None
+        max_subarray_sum = 0
+
+        # work from mid->high to find the maximum sub-array on the right side
+        for i in range(mid + 1, high + 1):
+            max_subarray_sum += array[i]
+            if max_subarray_sum > right_sum:
+                right_sum = max_subarray_sum
+                max_right = i
+
+        # combine the left/right arrays crossing the midpoint
+        cross_low, cross_high, cross_sum = max_left, max_right, left_sum + right_sum
 
         # case 1: max sub-array is in left array
         if left_sum >= right_sum and left_sum >= cross_sum:
