@@ -21,7 +21,7 @@ def enum_max_subarray(ls):
 			low = i
 			high = j
 	
-	return maxSum, low, high
+	return low, high, maxSum
 
 
 
@@ -32,7 +32,7 @@ if __name__ == '__main__':
         	write_results(
             		filename='MSS_Results.txt',
             		original_array=problem,
-           		  max_subarray=problem[results[1]:results[2] + 1],
-            		max_sum=results1[0]
+           		  max_subarray=problem[results[0]:results[1] + 1],
+            		max_sum=results1[2]
 
         )
