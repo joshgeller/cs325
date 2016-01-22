@@ -10,7 +10,7 @@ def enum_max_subarray(ls):
 	low = high = 0
 	i = 0
 	for j in range (1, len(ls)):
-		if ls[j] > (newSum + ls[j]
+		if ls[j] > (newSum + ls[j]):
 			newSum = ls[j]
 			i = j
 		else:
