@@ -7,6 +7,7 @@
 import timeit
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy import stats
 from proj1_main import mss_enum, mss_better_enum, mss_div_and_conq, mss_linear
 
 def get_random_problems(n, x):
@@ -30,24 +31,55 @@ def plot_result(data, algo_name):
     return
 
 
+def calc_n_linear(t, slope, intercept):
+    n = int((t - intercept) / slope)
+    return n
+
+def calc_n_quadratic(t, coeffs):
+    coeffs = list(coeffs[:-1]) + [coeffs[-1] - t]
+    roots = np.roots(list(coeffs[:-1]) + [coeffs[-1] - t])
+    n = roots[np.isreal(roots)]
+    return int(max(n))
+
+
+def do_regression(data, algo_name):
+    x = sorted(data.keys())
+    y = [data[i] for i in x]
+    print('\nREGRESSION MODEL FOR {} SOLUTION: '.format(algo_name.upper()))
+    if algo_name in ['linear', 'divide and conquer']:
+        slope, intercept, r, p, std_err = stats.linregress(x,y)
+        equation = 'T(n) = {:.5g}*n + {:.5g}\n'.format(slope, intercept)
+        nmax = [calc_n_linear(t, slope, intercept) for t in [60, 120, 300]] 
+
+    if algo_name in ['enumeration', 'better enumeration']:
+        coeffs = np.polyfit(x, y, 2)
+        equation = 'T(n) = {:.5g}*n^2 + {:.5g}*n + {:.5g}\n'.format(*coeffs)
+        nmax = [calc_n_quadratic(t, coeffs) for t in [60, 120, 300]] 
+
+    print('Curve Fit Equation: {}'.format(equation), end="")
+    print('Largest input size that can be solved in 1 min: {:,}'.format(nmax[0]))
+    print('Largest input size that can be solved in 2 min: {:,}'.format(nmax[1]))
+    print('Largest input size that can be solved in 5 min: {:,}'.format(nmax[2]))
+
+    return
+    
+
 def main():
     algo_dict = {
         'enumeration' : 
-            [100, 200, 300, 400, 500],# 600, 700, 800, 900],
+            [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000],
         'better enumeration' : 
-            [100, 200, 400, 800, 1000],#, 2000, 4000, 6000, 10000, 12000],
+            [100, 200, 300, 400, 500, 900, 1000, 2000, 3000, 4000],
         'divide and conquer' : 
-            [100, 200, 500, 1000, 2000, 4000, 6000],# 10000, 12000, 15000],
+            [100, 200, 500, 1000, 2000, 4000, 6000, 10000, 12000, 15000],
         'linear' : 
-            [100, 200, 500, 1000, 2000, 5000, 10000], #, 20000, 50000, 100000],
+            [100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000],
     }
     results = {name : {} for name in algo_dict.keys()}
 
     for algo in algo_dict.keys():
         for n in algo_dict[algo]:
-            random_arrays = get_random_problems(n, 3)
-            # use the following in final run
-            #random_arrays = get_random_problems(n, 10)
+            random_arrays = get_random_problems(n, 10)
             for arr in random_arrays: 
                 run_times = []
 
@@ -74,7 +106,7 @@ def main():
             mean_run_time = np.mean(run_times)
             results[algo][n] = mean_run_time
         plot_result(results[algo], algo)
-
+        do_regression(results[algo], algo)
 
     colors = list('rgbcmyk')
     plt.figure()
@@ -82,14 +114,13 @@ def main():
         x = sorted(data.keys())
         y = [data[i] for i in x]
         plt.plot(x, y, marker='o', linestyle='solid', color=colors.pop())
-
     
     plt.title('Run Time Comparison of all 4 Algorithms -- Log-Log')
     plt.xlabel('Size of Array (n)')
     plt.ylabel('Run time (seconds)')
     plt.xscale('log')
     plt.yscale('log')
-    plt.legend(list(results.keys()), loc=2)
+    plt.legend(list(results.keys()))
     plt.show()
 
     return results
