@@ -9,48 +9,59 @@ import numpy as np
 import matplotlib.pyplot as plt
 from proj1_main import mss_enum, mss_better_enum, mss_div_and_conq, mss_linear
 
-def get_ten_random_problems(n):
-    """Returns a list of 10 lists where each contains n random integers."""
-    ten_random_problems = []
-    for i in range(10):
+def get_random_problems(n, x):
+    """Returns a list of x lists where each contains n random integers."""
+    random_problems = []
+    for i in range(x):
         rand_array = np.random.randint(low=-99, high=100, size=n)
-        ten_random_problems.append(list(rand_array))
-    return ten_random_problems
+        random_problems.append(list(rand_array))
+    return random_problems
+
+
+def plot_result(data, algo_name):
+    x = sorted(data.keys())
+    y = [data[i] for i in x]
+    plt.figure()
+    plt.plot(x, y, marker='o', linestyle='solid')
+    plt.title('Run Time of {}'.format(algo_name))
+    plt.xlabel('Size of Array (n)')
+    plt.ylabel('Run time (seconds)')
+
+    return
 
 
 def main():
     algo_dict = {
-        'enum' : [100, 200, 400, 600, 800, 
-                  1000, 2000, 4000, 6000, 10000],
-        'better_enum' : [100, 200, 400, 800, 1000, 
-                         2000, 4000, 6000, 10000, 12000],
-        'div_and_conq' : [100, 200, 500, 1000, 2000, 
-                          4000, 6000, 10000, 12000, 15000],
-        'linear' : [100, 200, 500, 1000, 2000, 
-                    5000, 10000, 20000, 50000, 100000],
+        'enumeration' : 
+            [100, 200, 300, 400, 500],# 600, 700, 800, 900],
+        'better enumeration' : 
+            [100, 200, 400, 800, 1000],#, 2000, 4000, 6000, 10000, 12000],
+        'divide and conquer' : 
+            [100, 200, 500, 1000, 2000, 4000, 6000],# 10000, 12000, 15000],
+        'linear' : 
+            [100, 200, 500, 1000, 2000, 5000, 10000], #, 20000, 50000, 100000],
     }
-    results = {'enum' : {}, 
-               'better_enum' : {},
-               'div_and_conq' : {}, 
-               'linear' : {}}
+    results = {name : {} for name in algo_dict.keys()}
 
     for algo in algo_dict.keys():
         for n in algo_dict[algo]:
-            random_arrays = get_ten_random_problems(n)
+            random_arrays = get_random_problems(n, 3)
+            # use the following in final run
+            #random_arrays = get_random_problems(n, 10)
             for arr in random_arrays: 
                 run_times = []
 
-                if algo == 'enum':
+                if algo == 'enumeration':
                     setup = 'from proj1_main import mss_enum'
                     s = 'mss_enum({})'.format(arr)
                     run_times.append(timeit.timeit(s, setup=setup, number=1))
                     
-                if algo == 'better_enum':
+                if algo == 'better enumeration':
                     setup = 'from proj1_main import mss_better_enum'
                     s = 'mss_better_enum({})'.format(arr)
                     run_times.append(timeit.timeit(s, setup=setup, number=1))
 
-                if algo == 'div_and_conq':
+                if algo == 'divide and conquer':
                     setup = 'from proj1_main import mss_div_and_conq'
                     s = 'mss_div_and_conq({}, 0, {})'.format(arr, len(arr)-1)
                     run_times.append(timeit.timeit(s, setup=setup, number=1))
@@ -62,12 +73,22 @@ def main():
 
             mean_run_time = np.mean(run_times)
             results[algo][n] = mean_run_time
+        plot_result(results[algo], algo)
+
 
     colors = list('rgbcmyk')
-    for data_dict in list(results.values()):
-        x = list(data_dict.keys())
-        y = list(data_dict.values())
-        plt.scatter(x, y, color=colors.pop())
+    plt.figure()
+    for data in list(results.values()):
+        x = sorted(data.keys())
+        y = [data[i] for i in x]
+        plt.plot(x, y, marker='o', linestyle='solid', color=colors.pop())
+
+    
+    plt.title('Run Time Comparison of all 4 Algorithms -- Log-Log')
+    plt.xlabel('Size of Array (n)')
+    plt.ylabel('Run time (seconds)')
+    plt.xscale('log')
+    plt.yscale('log')
     plt.legend(list(results.keys()), loc=2)
     plt.show()
 
