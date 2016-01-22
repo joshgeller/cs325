@@ -7,22 +7,20 @@
 
 from math import floor
 
+
 def mss_enum(ls):
     maxSum = newSum = 0
     low = high = 0
     i = 0
-    for j in range (1, len(ls)):
-        if ls[j] > (newSum + ls[j]):
-            newSum = ls[j]
-            i = j
-        else:
-            newSum += ls[j]
-
-        if newSum > maxSum:
-            maxSum = newSum
-            low = i
-            high = j
-
+    for i in range(len(ls)):
+        for j in range(i, len(ls)):
+            newSum = 0
+            for a in ls[i:j+1]:
+                newSum += a
+            if newSum > maxSum:
+                maxSum = newSum
+                low = i
+                high = j
     return low, high, maxSum
 
 
@@ -30,7 +28,7 @@ def mss_better_enum(ls):
     maxSum = newSum = 0
     low = high = 0
     i = 0
-    for i in range (len(ls)):
+    for i in range(len(ls)):
         newSum = 0
         for j in range(i, len(ls)):
             newSum = newSum + ls[j]
@@ -39,6 +37,7 @@ def mss_better_enum(ls):
                 low = i
                 high = j
     return low, high, maxSum
+
 
 def mss_div_and_conq(array, low, high):
     """
@@ -110,30 +109,19 @@ def mss_div_and_conq(array, low, high):
 
 
 def mss_linear(A):
-    max_sum = A[0]
-    sum_ij = A[0]
-    i_max = 0  # lower index of max subarray
-    j_max = 0  # upper index of max subarray
-    i = 0
-    j = 0
-    prev = A[0]
+    sum_ij = max_sum = A[0]
+    i = j = 0          # indices of current subarray
+    i_max = j_max = 0  # indices of max subarray
     for j, val in enumerate(A[1:], 1):
         sum_ij += val
-        if prev < 0 and val > max_sum:
-            max_sum = val
+        if val > (sum_ij):
             sum_ij = val
-            i_max = j 
-            j_max = j 
             i = j
-        elif -prev > max_sum:
-            sum_ij = val 
-            i = j 
-        elif sum_ij > max_sum:
+
+        if sum_ij > max_sum:
             max_sum = sum_ij
             j_max = j 
-            if i > i_max:
-                i_max = i
-        prev = val
+            i_max = i
     return i_max, j_max, max_sum
 
 
@@ -177,7 +165,7 @@ def main():
     problems = load_problems() 
     for problem in problems:
         #results = mss_linear(problem)
-        results = mss_enum(problem)
+        #results = mss_enum(problem)
         #results = mss_div_and_conq(array=problem, low=0, high=len(problem) - 1)
         write_results(
             filename='MSS_Results.txt',
