@@ -8,10 +8,37 @@
 from math import floor
 
 def mss_enum(ls):
-    return 
+    maxSum = newSum = 0
+    low = high = 0
+    i = 0
+    for j in range (1, len(ls)):
+        if ls[j] > (newSum + ls[j]):
+            newSum = ls[j]
+            i = j
+        else:
+            newSum += ls[j]
+
+        if newSum > maxSum:
+            maxSum = newSum
+            low = i
+            high = j
+
+    return low, high, maxSum
+
 
 def mss_better_enum(ls):
-    return
+    maxSum = newSum = 0
+    low = high = 0
+    i = 0
+    for i in range (len(ls)):
+        newSum = 0
+        for j in range(i, len(ls)):
+            newSum = newSum + ls[j]
+            if newSum > maxSum:
+                maxSum = newSum
+                low = i
+                high = j
+    return low, high, maxSum
 
 def mss_div_and_conq(array, low, high):
     """
@@ -150,7 +177,8 @@ def main():
     problems = load_problems() 
     for problem in problems:
         #results = mss_linear(problem)
-        results = mss_div_and_conq(array=problem, low=0, high=len(problem) - 1)
+        results = mss_enum(problem)
+        #results = mss_div_and_conq(array=problem, low=0, high=len(problem) - 1)
         write_results(
             filename='MSS_Results.txt',
             original_array=problem,

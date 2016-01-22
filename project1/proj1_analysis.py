@@ -20,12 +20,14 @@ def get_ten_random_problems(n):
 
 def main():
     algo_dict = {
-#        'enum' : [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000],
-#        'better_enum' : [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000],
-        'div_and_conq' : [100, 200, 500, 1000, 2000, 5000, 10000, 20000],
-                    #      50000, 100000],
-        'linear' : [100, 200, 500, 1000, 2000, 5000, 10000, 20000],
-                    #50000, 100000],
+        'enum' : [100, 200, 400, 600, 800, 
+                  1000, 2000, 4000, 6000, 10000],
+        'better_enum' : [100, 200, 400, 800, 1000, 
+                         2000, 4000, 6000, 10000, 12000],
+        'div_and_conq' : [100, 200, 500, 1000, 2000, 
+                          4000, 6000, 10000, 12000, 15000],
+        'linear' : [100, 200, 500, 1000, 2000, 
+                    5000, 10000, 20000, 50000, 100000],
     }
     results = {'enum' : {}, 
                'better_enum' : {},
@@ -38,16 +40,16 @@ def main():
             for arr in random_arrays: 
                 run_times = []
 
-#                if algo == 'enum':
-#                    setup = 'from proj1_main import mss_enum'
-#                    s = 'mss_enum({})'.format(arr)
-#                    run_times.append(timeit.timeit(s, setup=setup, number=1))
-#                    
-#                if algo == 'better_enum':
-#                    setup = 'from proj1_main import mss_better_enum'
-#                    s = 'mss_better_enum({})'.format(arr)
-#                    run_times.append(timeit.timeit(s, setup=setup, number=1))
-#
+                if algo == 'enum':
+                    setup = 'from proj1_main import mss_enum'
+                    s = 'mss_enum({})'.format(arr)
+                    run_times.append(timeit.timeit(s, setup=setup, number=1))
+                    
+                if algo == 'better_enum':
+                    setup = 'from proj1_main import mss_better_enum'
+                    s = 'mss_better_enum({})'.format(arr)
+                    run_times.append(timeit.timeit(s, setup=setup, number=1))
+
                 if algo == 'div_and_conq':
                     setup = 'from proj1_main import mss_div_and_conq'
                     s = 'mss_div_and_conq({}, 0, {})'.format(arr, len(arr)-1)
