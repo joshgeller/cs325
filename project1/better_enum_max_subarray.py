@@ -11,7 +11,7 @@ def better_enum_max_subarray(ls):
 	maxSum = newSum = 0
 	low = high = 0
 	i = 0
-	for i in range len(ls):
+	for i in range (len(ls)):
 		newSum = 0
 		for j in range(i, len(ls)):
 			newSum = newSum + ls[j]
