@@ -6,20 +6,23 @@ Based on pseudocode from Glencora Borradaile's
 """
 
 def enum_max_subarray(ls):
-	maxSum = newSum = 0
+	
+	maxSum = curSum = ls[0]
 	low = high = 0
 	i = 0
-	for j in range (1, len(ls)):
-		if ls[j] > (newSum + ls[j]):
-			newSum = ls[j]
-			i = j
-		else:
-			newSum += ls[j]
+	
+	for i in range (len(ls)):
+		for j in range (i, len(ls)):
+			curSum = 0
+			curLen = 0
+			for k in range (i, j):
+				curSum += ls[k]
+				curLen += 1
+			if curSum > maxSum:
+				maxSum = curSum
+				low = i
+				high = (i + (curLen - 1))
 
-		if newSum > maxSum:
-			maxSum = newSum
-			low = i
-			high = j
 	
 	return low, high, maxSum
 
