@@ -39,13 +39,47 @@ def mss_better_enum(ls):
     return low, high, maxSum
 
 
+def find_max_crossing_subarray(array, low, mid, high):
+    """
+    Based on pseudocode in Introduction to Algorithms, 3rd edition
+    O(n) utility function to find the maximum sub-array crossing the midpoint in
+    a sub-array size A[low..high].
+    :return: tuple containing indices of a max subarray that crosses the
+    midpoint, as well as the sum of the values in the max sub-array.
+    """
+
+    # calculate index boundary and sum of left max sub-array
+
+    left_sum = float("-inf")
+    max_left = None
+    max_subarray_sum = 0
+
+    for i in range(mid, low - 1, -1):
+        max_subarray_sum += array[i]
+        if max_subarray_sum > left_sum:
+            left_sum = max_subarray_sum
+            max_left = i
+
+    # calculate index boundary and sum of right max sub-array
+
+    right_sum = float("-inf")
+    max_right = None
+    max_subarray_sum = 0
+
+    for i in range(mid + 1, high + 1):
+        max_subarray_sum += array[i]
+        if max_subarray_sum > right_sum:
+            right_sum = max_subarray_sum
+            max_right = i
+
+    return max_left, max_right, left_sum + right_sum
+
+
 def mss_div_and_conq(array, low, high):
     """
     Based on pseudocode in Introduction to Algorithms, 3rd edition
-
     Recursively searches the left, right, and crossing sub-arrays in
     array[low..high] to find the maximum sub-array.
-
     :return: tuple containing indices of a max sub-array, as well as the sum of
     the values in the max sub-array.
     """
@@ -56,44 +90,19 @@ def mss_div_and_conq(array, low, high):
 
     # recursive case: >1 element in array
     else:
-        # calculate midpoint of sub-array
         mid = int(floor((low + high) / 2))
 
-        # recursive sub-problem: left-array
+        # recursive sub-problems
+
         left_low, left_high, left_sum = \
             mss_div_and_conq(array, low, mid)
 
-        # recursive sub-problem: right-array
         right_low, right_high, right_sum = \
             mss_div_and_conq(array, mid + 1, high)
 
-        # crossing sub-problem: find the index bounds and sum of the maximum
-        # sub-array crossing the midpoint of array[low..high]
-
-        left_sum = float("-inf")
-        max_left = None
-        max_subarray_sum = 0
-
-        # work from mid->low to find the maximum sub-array on the left side
-        for i in range(mid, low - 1, -1):
-            max_subarray_sum += array[i]
-            if max_subarray_sum > left_sum:
-                left_sum = max_subarray_sum
-                max_left = i
-
-        right_sum = float("-inf")
-        max_right = None
-        max_subarray_sum = 0
-
-        # work from mid->high to find the maximum sub-array on the right side
-        for i in range(mid + 1, high + 1):
-            max_subarray_sum += array[i]
-            if max_subarray_sum > right_sum:
-                right_sum = max_subarray_sum
-                max_right = i
-
-        # combine the left/right arrays crossing the midpoint
-        cross_low, cross_high, cross_sum = max_left, max_right, left_sum + right_sum
+        # crossing sub-problem
+        cross_low, cross_high, cross_sum = \
+            find_max_crossing_subarray(array, low, mid, high)
 
         # case 1: max sub-array is in left array
         if left_sum >= right_sum and left_sum >= cross_sum:
@@ -166,7 +175,8 @@ def main():
     for problem in problems:
         #results = mss_linear(problem)
         #results = mss_enum(problem)
-        #results = mss_div_and_conq(array=problem, low=0, high=len(problem) - 1)
+        #results = mss_better_enum(problem)
+        results = mss_div_and_conq(array=problem, low=0, high=len(problem) - 1)
         write_results(
             filename='MSS_Results.txt',
             original_array=problem,

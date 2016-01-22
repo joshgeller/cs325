@@ -1,3 +1,5 @@
+#! /usr/local/bin/python3
+
 def load_problems():
     """
     Loads problem data from MSS_Problems.txt.
@@ -27,6 +29,6 @@ def write_results(filename, original_array, max_subarray, max_sum):
     :return: outputs file to disk
     """
     with open(filename, 'a') as f:
-        f.write('{}\n'.format(original_array))
-        f.write('{}\n'.format(max_subarray))
-        f.write('{}\n\n'.format(max_sum))
+        f.write('{0}\n'.format(original_array))
+        f.write('{0}\n'.format(max_subarray))
+        f.write('{0}\n\n'.format(max_sum))
