@@ -83,7 +83,6 @@ def mss_div_and_conq(array, low, high):
     :return: tuple containing indices of a max sub-array, as well as the sum of
     the values in the max sub-array.
     """
-
     # base case: one element in array
     if high == low:
         return low, high, array[low]
@@ -154,35 +153,55 @@ def load_problems():
     return problems
 
 
-def write_results(filename, original_array, max_subarray, max_sum):
+def write_results(filename, algorithm_name, original_array, max_subarray, max_sum):
     """
     Writes results to file in proper format.
 
     :param filename: output filename
+    :param algorithm_name: name of algorithm to categorize results file
     :param original_array: original array
     :param max_subarray: max subarray in original_array
     :param max_sum: sum of elements in max_subarray
     :return: outputs file to disk
     """
     with open(filename, 'a') as f:
-        f.write('{}\n'.format(original_array))
-        f.write('{}\n'.format(max_subarray))
-        f.write('{}\n\n'.format(max_sum))
+        f.write('{0}\n'.format(algorithm_name))
+        f.write('{0}\n'.format(original_array))
+        f.write('{0}\n'.format(max_subarray))
+        f.write('{0}\n\n'.format(max_sum))
 
 
 def main():
-    problems = load_problems() 
-    for problem in problems:
-        #results = mss_linear(problem)
-        #results = mss_enum(problem)
-        #results = mss_better_enum(problem)
-        results = mss_div_and_conq(array=problem, low=0, high=len(problem) - 1)
-        write_results(
-            filename='MSS_Results.txt',
-            original_array=problem,
-            max_subarray=problem[results[0]:results[1] + 1],
-            max_sum=results[2]
-        )
+
+    algorithms = {
+        'Linear': mss_linear,
+        'Enum': mss_enum,
+        'Better Enum': mss_better_enum,
+        'Divide and Conquer': mss_div_and_conq
+    }
+
+    problems = load_problems()
+    for algorithm_name, algorithm_func in algorithms.items():
+        print('Running {0}...'.format(algorithm_name))
+        for problem in problems:
+            if algorithm_name == 'Divide and Conquer':
+                results = algorithm_func(array=problem, low=0, high=len(problem) - 1)
+                write_results(
+                    filename='MSS_Results.txt',
+                    algorithm_name=algorithm_name,
+                    original_array=problem,
+                    max_subarray=problem[results[0]:results[1] + 1],
+                    max_sum=results[2]
+                )
+            else:
+                results = algorithm_func(problem)
+                write_results(
+                    filename='MSS_Results.txt',
+                    algorithm_name=algorithm_name,
+                    original_array=problem,
+                    max_subarray=problem[results[0]:results[1] + 1],
+                    max_sum=results[2]
+                )
 
 
 if __name__ == "__main__":
