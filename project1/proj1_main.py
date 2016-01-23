@@ -182,7 +182,7 @@ def main():
 
     problems = load_problems()
     for algorithm_name, algorithm_func in algorithms.items():
-        print(algorithm_name)
+        print('Running {0}...'.format(algorithm_name))
         for problem in problems:
             if algorithm_name == 'Divide and Conquer':
                 results = algorithm_func(array=problem, low=0, high=len(problem) - 1)
