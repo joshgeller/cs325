@@ -6,15 +6,18 @@
 '''
 import timeit
 import sys
-import numpy as np
-import matplotlib.pyplot as plt
+import random
+
+if len(sys.argv) > 1 and sys.argv[1] == '--analyze':
+    import numpy as np
+    import matplotlib.pyplot as plt
 
 def get_random_problems(n, x):
     """Returns a list of x lists where each contains n random integers."""
     random_problems = []
     for i in range(x):
-        rand_array = np.random.randint(low=-99, high=100, size=n)
-        random_problems.append(list(rand_array))
+        rand_array = [random.randint(-99,100) for i in range(n)] 
+        random_problems.append(rand_array)
     return random_problems
 
 
@@ -163,7 +166,7 @@ def main():
                 time = timeit.timeit(s, setup=setup, number=1)
                 run_times.append(time)
 
-            mean_run_time = np.mean(run_times)
+            mean_run_time = sum(run_times) / len(run_times)
             results[algo][n] = mean_run_time
         print_result(results[algo], algo)
 
