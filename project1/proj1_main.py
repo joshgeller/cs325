@@ -1,4 +1,5 @@
-''' 
+#/usr/bin/python3.2
+'''
     CS 325 Winter 2016 -- Project 1: Maximum Sum Subarray
 
     Program to compare four different algorithms for determining the subarray 
