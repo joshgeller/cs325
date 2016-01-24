@@ -83,9 +83,9 @@ def do_regression(data, algo_name):
         fit = np.poly1d(coeffs)(x)
 
     if algo_name in ['divide and conquer']:
-        coeffs = np.polyfit(x*np.log(x), y, 1)
+        coeffs = np.polyfit(x*np.log2(x), y, 1)
         equation = 'T(n) = {:.5g}*n*log(n) + {:.5g}\n'.format(*coeffs)
-        fit = np.poly1d(coeffs)(x*np.log(x))
+        fit = np.poly1d(coeffs)(x*np.log2(x))
 
     if algo_name in ['better enumeration']:
         coeffs = np.polyfit(x, y, 2)
@@ -147,22 +147,21 @@ def main():
                 if algo == 'enumeration':
                     setup = 'from proj1_main import mss_enum'
                     s = 'mss_enum({})'.format(arr)
-                    run_times.append(timeit.timeit(s, setup=setup, number=1))
                     
                 if algo == 'better enumeration':
                     setup = 'from proj1_main import mss_better_enum'
                     s = 'mss_better_enum({})'.format(arr)
-                    run_times.append(timeit.timeit(s, setup=setup, number=1))
 
                 if algo == 'divide and conquer':
                     setup = 'from proj1_main import mss_div_and_conq'
                     s = 'mss_div_and_conq({}, 0, {})'.format(arr, len(arr)-1)
-                    run_times.append(timeit.timeit(s, setup=setup, number=1))
 
                 if algo == 'linear':
                     setup = 'from proj1_main import mss_linear'
                     s = 'mss_linear({})'.format(arr)
-                    run_times.append(timeit.timeit(s, setup=setup, number=1))
+
+                time = timeit.timeit(s, setup=setup, number=1)
+                run_times.append(time)
 
             mean_run_time = np.mean(run_times)
             results[algo][n] = mean_run_time
