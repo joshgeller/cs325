@@ -19,7 +19,7 @@ def get_random_problems(n, x):
     """Returns a list of x lists where each contains n random integers."""
     random_problems = []
     for i in range(x):
-        rand_array = [random.randint(-99, 100) for i in range(1, n+1)]
+        rand_array = [random.randint(-99, 100) for i in range(0, n+1)]
         random_problems.append(rand_array)
     return random_problems
 
