@@ -5,10 +5,9 @@
     various input sizes and produces plots and curve fit equations.
 '''
 import timeit
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy import stats
-from proj1_main import mss_enum, mss_better_enum, mss_div_and_conq, mss_linear
 
 def get_random_problems(n, x):
     """Returns a list of x lists where each contains n random integers."""
@@ -20,6 +19,8 @@ def get_random_problems(n, x):
 
 
 def plot_indiv_result(data, algo_name):
+    """Plots the mean run times for one algorithm on log-log and
+    linear-linear."""
     x = sorted(data.keys())
     y = [data[i] for i in x]
 
@@ -59,6 +60,7 @@ def solve_for_n(y, coeffs):
 
 
 def print_result(data, algo_name):
+    """Prints mean run times for a single algorithm."""
     print('\n{}'.format('='*79))
     print('RESULTS FOR *{}* ALGORITHM '.format(algo_name.upper()))
     print('Mean Run Times for 10 random problems of size n:\n') 
@@ -68,7 +70,9 @@ def print_result(data, algo_name):
         print('    {:<13,d}{:7.5e}'.format(n, data[n]))
 
 
-def do_regression(data, algo_name):
+def do_regression(data, algo_name): 
+    """Calculates curve fit, prints equation, and calculates max array size
+    that can be solved in 1, 2 and 5 minutes."""
     x = sorted(data.keys())
     y = [data[i] for i in x]
     print('\nREGRESSION MODEL FOR {} ALGORITHM'.format(algo_name.upper()))
@@ -163,11 +167,14 @@ def main():
             mean_run_time = np.mean(run_times)
             results[algo][n] = mean_run_time
         print_result(results[algo], algo)
-        plot_indiv_result(results[algo], algo)
-        do_regression(results[algo], algo)
 
-    plot_all_results(results)
-    plt.show()
+        if len(sys.argv) > 1 and sys.argv[1] == '--analyze':
+            plot_indiv_result(results[algo], algo)
+            do_regression(results[algo], algo)
+
+    if len(sys.argv) > 1 and sys.argv[1] == '--analyze':
+        plot_all_results(results)
+        plt.show()
 
     return results
 
