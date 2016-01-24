@@ -145,7 +145,7 @@ def load_problems():
     """
     problems = []
     #with open('tests/MSS_Problems.txt') as f:
-    with open('tests/MSS_TestProblems.txt') as f:
+    with open('MSS_Problems.txt') as f:
         for line in f:
             line = line.replace('[', '').replace(']', '').replace(' ', '')
             problems.append(
