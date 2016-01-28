@@ -27,6 +27,7 @@ def changedp(coins, change):
         # store the last coin used
         coins_used[change_subproblem] = last_coin_used
 
+    # TODO output
     return coins_used, min_coins[change]
 
 
