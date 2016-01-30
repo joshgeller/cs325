@@ -1,4 +1,16 @@
+#!/usr/local/bin/python3
+
 def changedp(coins, change):
+
+    """
+    Based on pseudocode found in CS78000 Advanced Algorithms class worksheet
+    (Dynamic Programming Solution to the Coin Changing Problem) by Professor
+    Aslam of Northeastern University.
+
+    :param coins:
+    :param change:
+    :return:
+    """
 
     # first, we create an array with n indices, where n = change
     # min_coins[i] = the minimum number of coins needed to make i change
