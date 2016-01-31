@@ -1,4 +1,4 @@
-####/usr/bin/python3.2
+#/usr/bin/python3.2
 '''
     CS 325 Winter 2016 -- Project 2: Coin Change 
 
@@ -16,25 +16,46 @@ except Exception:
     pass
 
 
-def plot_indiv_result(data):  #, algo_name):
-    x = [i for i in data['A_list']]
-    num_coins = [data['num_coins'][i] for i in x]
-    times = [data['times'][i] for i in x]
+def plot_coins(data, part_num):
+    """Plots Number of Coins vs A for all 3 algorithms on one figure."""
+    marks = list('o*^')
+    for algo in ['changegreedy', 'changedp']: #, 'changeslow']:
+        x = [i for i in data['A_list']]
+        y = data[algo]['num']
+        plt.plot(x, y, linestyle='None', marker=marks.pop(), label=algo)
 
-    f, (ax1, ax2) = plt.subplots(2, 1)
-    ax1.scatter(x, num_coins, marker='o')
-    ax1.set_xlabel('A')
-    ax1.set_ylabel('Minimum Nuber of Coins')
-    #ax1.set_xlim(.9*min(x), 1.1*max(x))
-    #ax1.set_ylim(.1*min(y), 10*max(y))
-    #ax1.set_title('Mean Run Times of *{}* algorithm'.format(algo_name))
+    plt.xlabel('Amount of Change to Make (A)')
+    plt.ylabel('Minimum Nuber of Coins Needed')
+    plt.xlim(min(x)-10, max(x)+10)
+    plt.ylim(min(y)-1, max(y)+1)
+    plt.title('Part {} -- Number of Coins vs. A'.format(part_num))
+    plt.legend()
+    plt.grid()
 
-    ax2.scatter(x, times, marker='o', label='data')
-    ax2.set_xlabel('A')
-    ax2.set_ylabel('Run time (seconds)')
-    ax2.set_xlim(min(x)*.95, max(x)*1.1)
-    ax2.set_ylim(min(times)*.95, max(times))
-    f.tight_layout()
+    return
+
+
+def plot_times(data, part_num):
+    """Plots Run Times vs A for all 3 algorithms on one figure."""
+    marks = list('o*^')
+    #for algo in ['changeslow', 'changedp', 'changegreedy']:
+    for algo in ['changedp', 'changegreedy']:
+        x = [i for i in data['A_list']]
+        y = data[algo]['times']
+        plt.plot(x, y, linestyle='None', marker=marks.pop(), label=algo)
+
+    plt.xlabel('Amount of Change to Make (A)')
+    plt.ylabel('Run Time (seconds)')
+    plt.xlim(min(x)-10, max(x)+10)
+    #plt.ylim(0.0, max_y*1.05)
+    ticklocs = ticklabels = [A for A in x[::5]]
+    plt.xticks(ticklocs, ticklabels)
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.title('Part {} -- Run Time vs. A'.format(part_num))
+    plt.legend()
+    plt.grid()
+
     return
 
 
@@ -121,42 +142,47 @@ def plot_all_results(results):
 
 
 def main():
-    #brute_func = proj2_main.changeslow
-    greedy_func = proj2_main.changegreedy
-    #dp_func = proj2_main.changedp
-    #algos = [brute_func, greedy_func, dp_func]
-    algos = [greedy_func]
+    algos = {'changegreedy' : proj2_main.changegreedy,
+           #  'changeslow' : proj2_main.changeslow,
+             'changedp' : proj2_main.changedp}
+    experiments = {'4' : {'V' : [1, 5, 10, 25, 50], 
+                          'A_list' : range(2010, 2205, 5),
+                          'changeslow' : {'times' : [], 'num' : []},
+                          'changegreedy' : {'times' : [], 'num' : []},
+                          'changedp' : {'times' : [], 'num' : []}}, 
+                   '5_V1': {'V' : [1, 2, 6, 12, 24, 48, 60], 
+                            'A_list' : range(2000, 2201, 1),
+                            'changeslow' : {'times' : [], 'num' : []},
+                            'changegreedy' : {'times' : [], 'num' : []},
+                            'changedp' : {'times' : [], 'num' : []}}, 
+                   '5_V2': {'V' : [1, 6, 13, 37, 150],       
+                            'A_list' : range(2000, 2201, 1),
+                            'changeslow' : {'times' : [], 'num' : []},
+                            'changegreedy' : {'times' : [], 'num' : []},
+                            'changedp' : {'times' : [], 'num' : []}}, 
+                   '6':  {'V' : [1] + list(range(2, 32, 2)), 
+                          'A_list' : range(2000, 2201, 1),
+                          'changeslow' : {'times' : [], 'num' : []},
+                          'changegreedy' : {'times' : [], 'num' : []},
+                          'changedp' : {'times' : [], 'num' : []}}} 
 
-    
-    experiments = {4 : {'V_list' : [1, 5, 10, 25, 50], 
-                        'A_list' : range(2010, 2205, 5),
-                        'num_coins' : {},
-                        'times' : {}},
-                  }
-
-    for part in [4]: #, 5, 6]:
-        for algo in algos:
+    for part in ['4', '5_V1', '5_V2', '6']:
+        for algo in ['changegreedy', 'changedp']:
+        #for algo in ['changeslow', 'changegreedy', 'changedp']:
             for A in experiments[part]['A_list']: 
-                exp = (experiments[part]['V_list'], A)
-
                 start_time = time.time()
-                answer = algo(exp)
+                qty, min_coins = algos[algo](experiments[part]['V'], A)
                 end_time = time.time()
+                experiments[part][algo]['times'].append(end_time - start_time)
+                experiments[part][algo]['num'].append(min_coins)
 
-                experiments[part]['times'][A] = end_time - start_time
-                experiments[part]['num_coins'][A] = answer[-1] 
-
-#            results[algo][n] = mean_run_time
-#        print_result(results[algo], algo)
-
-            if len(sys.argv) > 1 and sys.argv[1] == '--plot':
-                plot_indiv_result(experiments[part])
-        #do_regression(results[algo], algo)
-#
-#    if len(sys.argv) > 1 and sys.argv[1] == '--analyze':
-#        plot_all_results(results)
+        if len(sys.argv) > 1 and sys.argv[1] == '--plot':
+            plt.figure()
+            plot_coins(experiments[part], part)
+            plt.figure()
+            plot_times(experiments[part], part)
+    #do_regression(results[algo], algo)
     plt.show()
-#
     return experiments
 
 
