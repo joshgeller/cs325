@@ -16,7 +16,10 @@ def load_problems():
         try:
             coins = f.readline()
             if coins:
-                coins = [int(num) for num in coins.replace('[', '').replace(']', '').replace(' ', '').split(',') if num not in '\n']
+                coins = [int(num) for num in coins.replace('[', '')
+                            .replace(']', '')
+                            .replace(' ', '')
+                            .split(',') if num not in '\n']
             else:
                 break
             change = f.readline()
@@ -47,10 +50,8 @@ def write_results(filename, algorithm_name, qty_array, min_coins):
         f.write('{0}\n'.format(qty_array))
         f.write('{0}\n\n'.format(min_coins))
 
-def changegreedy(problem):
+def changegreedy(V, A):
     """ Naive greedy algorithm."""
-    V = problem[0]
-    A = problem[-1]
     min = 0
     qtys = [0] * len(V)
     change_made = 0
@@ -63,13 +64,73 @@ def changegreedy(problem):
         else:
             i -= 1
 
-    return (qtys, min)
+    return qtys, min
+
+
+def changedp(coins, change):
+
+    # first, we create an array with n indices, where n = change
+    # min_coins[i] = the minimum number of coins needed to make i change
+    # e.g. let change=5, min_coins = [0, 0, 0, 0, 0]
+    min_coins = [0] * (change + 1)
+
+    # create an array with m indices, where m = change
+    # table used to calculate the quantity of each coin used to make m change
+    # coins_used[i] = the value of the last coin used to make i change
+    # e.g. let change=1, coins_used[i] = 1
+    coins_used = [0] * (change + 1)
+
+    # final results array - quantity used for each coin value
+    # e.g. let coins=[1,5], change=5, qty_used=[0,1]
+    qty_used = [0] * len(coins)
+
+    # bottom-up approach - solve small sub-problems first, from [0..change]
+    for change_subproblem in range(change + 1):
+
+        # base case: zero or one coin needed for every cent in the sub-problem
+        coins_needed = change_subproblem
+        if change_subproblem == 0:
+            last_coin_used = 0
+        else:
+            last_coin_used = 1
+
+        # use optimal sub-structure of sub-problems to determine the
+        # minimum number of coins required for the current sub-problem
+        for coin in coins:
+            if coin <= change_subproblem:
+                if 1 + min_coins[change_subproblem - coin] < coins_needed:
+                    coins_needed = 1 + min_coins[change_subproblem - coin]
+                    last_coin_used = coin
+
+        # store the sub-problem solution in the table
+        min_coins[change_subproblem] = coins_needed
+
+        # store the last coin used
+        coins_used[change_subproblem] = last_coin_used
+
+    # add up how many coins of each value were used
+    coin = change
+    while coin > 0:
+        # get the coin used to make the change at the current position
+        coin_used = coins_used[coin]
+        # increment the quantity used for this denomination
+        qty_used[coins.index(coin_used)] += 1
+        # subtract the value of the coin used to find the next coin
+        coin -= coin_used
+
+    return qty_used, min_coins[change]
+
+
+def changeslow():
+    return
+
 
 def main():
     problems = load_problems() 
-    for problem in problems:
+    for problem  in problems:
         print("Problem: {}, {}".format(*problem))
-        qty_array, min_coins = changegreedy(problem)
+        #qty_array, min_coins = changegreedy(problem[0], problem[1])
+        qty_array, min_coins = changedp(problem[0], problem[1])
         print("Min: {}  Qtys: {}".format(min_coins, qty_array))
 
     #write_results('greedy_out.txt', 'greedy', qty_array, min_coins)
