@@ -1,8 +1,11 @@
-####! /usr/local/bin/python3
+#!/usr/local/bin/python3
 
-def load_problems():
+import sys
+
+
+def load_problems(filename):
     """
-    Loads problem data from Coin1.txt.
+    Loads problem data from file.
     Reads two lines at a time to extract full problem data.
 
     :return: array of tuples, each tuple represents a coin change problem
@@ -11,15 +14,15 @@ def load_problems():
 
     """
     problems = []
-    f = open('tests/Coin1.txt', 'r')
+    f = open(filename, 'r')
     while 1:
         try:
             coins = f.readline()
             if coins:
                 coins = [int(num) for num in coins.replace('[', '')
-                            .replace(']', '')
-                            .replace(' ', '')
-                            .split(',') if num not in '\n']
+                    .replace(']', '')
+                    .replace(' ', '')
+                    .split(',') if num not in '\n']
             else:
                 break
             change = f.readline()
@@ -35,6 +38,7 @@ def load_problems():
 
     return problems
 
+
 def write_results(filename, algorithm_name, qty_array, min_coins):
     """
     Writes results to file in proper format.
@@ -48,14 +52,15 @@ def write_results(filename, algorithm_name, qty_array, min_coins):
     with open(filename, 'a') as f:
         f.write('{0}\n'.format(algorithm_name))
         f.write('{0}\n'.format(qty_array))
-        f.write('{0}\n\n'.format(min_coins))
+        f.write('{0}\n'.format(min_coins))
+
 
 def changegreedy(V, A):
     """ Naive greedy algorithm."""
     min = 0
     qtys = [0] * len(V)
     change_made = 0
-    i = len(V) - 1 
+    i = len(V) - 1
     while change_made < A:
         if (V[i] + change_made <= A):
             change_made += V[i]
@@ -68,7 +73,6 @@ def changegreedy(V, A):
 
 
 def changedp(coins, change):
-
     # first, we create an array with n indices, where n = change
     # min_coins[i] = the minimum number of coins needed to make i change
     # e.g. let change=5, min_coins = [0, 0, 0, 0, 0]
@@ -139,22 +143,31 @@ def changeslow(V, K, total):
     return min_coins, total
 
 
-def main():
-    #problems = load_problems() 
-    problems = [([1, 2, 4, 8], 15),
-                ([1, 3, 7, 12], 29),
-                ([1, 3, 7, 12], 31)]
-    for problem  in problems:
-        print("Problem: {}, {}".format(*problem))
-        #qty_array, min_coins = changeslow(problem[0], problem[1], 1)
-        qty_array, min_coins = changegreedy(problem[0], problem[1])
-        #qty_array, min_coins = changedp(problem[0], problem[1])
-        print("Min: {}  Qtys: {}".format(min_coins, qty_array))
+def main(filename):
+    algorithms = {
+        'Greedy': changegreedy,
+        'Brute Force': changeslow,
+        'Dynamic Programming': changedp,
+    }
 
-    #write_results('greedy_out.txt', 'greedy', qty_array, min_coins)
+    problems = load_problems(filename)
 
-    return qty_array
+    for algorithm_name, algorithm_func in algorithms.items():
+        print('Running {0}...'.format(algorithm_name))
+        for problem in problems:
+            if algorithm_name == 'Brute Force':
+                qty, min = algorithm_func(problem[0], problem[1], 1)
+            else:
+                qty, min = algorithm_func(problem[0], problem[1])
+
+            write_results('{}change.txt'.format(filename.split('.')[0]),
+                          algorithm_name, qty, min)
 
 
 if __name__ == "__main__":
-    results = main()
+    if len(sys.argv) > 1:
+        filename = sys.argv[1]
+        main(filename)
+    else:
+        print('Invalid command line arguments')
+        exit(1)
