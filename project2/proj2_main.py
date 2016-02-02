@@ -121,16 +121,34 @@ def changedp(coins, change):
     return qty_used, min_coins[change]
 
 
-def changeslow():
-    return
+def changeslow(V, K, total):
+    min_coins = [0] * len(V)
+
+    if K in V:
+        min_coins[V.index(K)] += 1
+        return min_coins, total
+
+    min_coins[0] = K
+
+    for i in [coin for coin in V if coin <= K]:
+        subproblem_qty, dummy = changeslow(V, K - i, total)
+        subproblem_qty[V.index(i)] += 1
+        if sum(min_coins) > sum(subproblem_qty):
+            min_coins = subproblem_qty
+            total = sum(min_coins)
+    return min_coins, total
 
 
 def main():
-    problems = load_problems() 
+    #problems = load_problems() 
+    problems = [([1, 2, 4, 8], 15),
+                ([1, 3, 7, 12], 29),
+                ([1, 3, 7, 12], 31)]
     for problem  in problems:
         print("Problem: {}, {}".format(*problem))
-        #qty_array, min_coins = changegreedy(problem[0], problem[1])
-        qty_array, min_coins = changedp(problem[0], problem[1])
+        #qty_array, min_coins = changeslow(problem[0], problem[1], 1)
+        qty_array, min_coins = changegreedy(problem[0], problem[1])
+        #qty_array, min_coins = changedp(problem[0], problem[1])
         print("Min: {}  Qtys: {}".format(min_coins, qty_array))
 
     #write_results('greedy_out.txt', 'greedy', qty_array, min_coins)
