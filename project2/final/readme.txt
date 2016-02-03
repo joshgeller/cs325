@@ -1,4 +1,4 @@
-CS352 Group 2 Project 1
+CS352 Group 2 Project 2
 Tim Thomas <thomasti@oregonstate.edu>
 Kimberly McLeod <mcleodki@oregonstate.edu>
 Josh Geller <gellerj@oregonstate.edu>
@@ -18,3 +18,10 @@ Note: Problems must be formatted the same way they appear in CoinW16.txt, e.g.
 75
 
 ******************************************
+
+To compile and execute the experimental analysis script (requires matplotlib 
+and numpy libraries), run the following command:
+
+    python3 proj2_analysis.py --plot
+
+
