@@ -1,6 +1,7 @@
 #!/usr/local/bin/python3
 import math
 import sys
+from pandas import *
 
 
 class City(object):
@@ -46,7 +47,11 @@ def load(*args):
     cities = []
     for city in raw_cities:
         id, x, y = city.split(' ')
-        cities.append(City(id, x, y))
+        cities.append(City(id, int(x), int(y)))
+
+    x = sorted(cities, key=lambda c: c.x)
+    plane = [[c.x, c.y] for c in x]
+    print(DataFrame(plane))
     return cities
 
 
