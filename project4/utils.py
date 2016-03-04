@@ -47,6 +47,7 @@ def load(*args):
     for city in raw_cities:
         id, x, y = city.split(' ')
         cities.append(City(id, x, y))
+    return cities
 
 
 def results(filename, length, cities):
