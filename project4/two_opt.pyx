@@ -1,3 +1,4 @@
+import time
 from libc.math cimport sqrt
 
 def two_opt_swap(list T, int  i, int k):
@@ -29,12 +30,16 @@ def somefunc(list T, long T_cost, dict cities):
     cdef long Tp_cost
     cdef list Tp
     improved = False
+    t = time.time()
     for i in range(1, len(T[1:-1])): 
+        if time.time() > (t + 60):
+            t = time.time()
+            tstr = time.strftime('%X %x %Z')
+            print("Best so far: {:,d} @ {}".format(T_cost, tstr)) 
         for k in range(i+1, len(T[1:-1]) + 1):
             Tp = two_opt_swap(T, i, k) 
             Tp_cost = get_tour_cost(Tp, cities)
             if Tp_cost < T_cost:
-    #            t = time.strftime('%X %x %Z')
                 T = Tp
                 T_cost = Tp_cost
                 improved = True
