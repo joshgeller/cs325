@@ -1,0 +1,49 @@
+Using original attempt at SA
+
+for ex1:
+   -- use 2-approx seed
+   -- use fCool = 0.9
+   -- use start temp = 1.0e10
+   -- result / optimal =~ 1.04 
+   -- num_iter = 1000
+   -- run time:  13.2 s
+
+
+for ex2:
+   -- use 2-approx seed
+   -- use fCool = 0.9
+   -- use start temp = 1.0e5
+   -- result / optimal =~ 1.18 
+   -- num_iter = 1000
+   -- run time:  31.9 s
+
+for ex3:
+    -- haven't found right parameters to improve upon
+    initial seed
+
+==============================================================================
+Using Rutgers SA
+
+for ex1 and ex2, decent results found with:
+    Tstart = 0.2    
+    Tend = 0.1
+    fCool = 0.95    
+    maxSteps = 100*ncities
+    maxAccepted = 10*ncities 
+
+Ex 3:
+    Tstart = 0.3                 # Starting temperature - has to be high enough
+    Tend = 0.1                   # Ending temperature - quit when reached
+    fCool = 0.9 * 0.1*ncities/20000.0                 # Factor to multiply temperature at each cooling step
+    maxSteps = 200 * ncities     # Number of steps at constant temperature
+    maxAccepted = 20 * ncities   # Number of accepted steps at constant temperature
+    Preverse = 0.5      # How often to choose reverse/transpose trial move
+    
+    RESULTS:  1,935,557, 1h 51min
+
+    optimal_dict = {'1' : 108159, '2' : 2579, '3' : 1573084}
+    cost_optimal = optimal_dict[sys.argv[1].split('/')[-1][-5]]
+
+    Also did a run with Tstart=0.3, Tend=.01 and fcool = .97
+    RESULTS: 1,819,695,  6h 21min
+
