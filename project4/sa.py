@@ -1,5 +1,5 @@
 #============================================================================== 
-#    CS 325, Winter 2016.  Project 4.  Traveling Salesman Problem
+#    CS 325, Winter 2016.  Group 2. Project 4.  Traveling Salesman Problem
 #    This program based in large part on methods discussed at:
 #    www.physics.rutgers.edu/~haule/681/MC.pdf
 #    and associated code found at:
