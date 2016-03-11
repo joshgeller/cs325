@@ -2,7 +2,9 @@ import time
 from libc.math cimport sqrt
 
 def two_opt_swap(list T, int  i, int k):
-    return T[:i] + T[k:i-1:-1] + T[k+1:]
+    T[i:k+1] = reversed(T[i:k+1])
+    #return T[:i] + T[k:i-1:-1] + T[k+1:]
+    return T
 
 
 def get_distance(int x1, int y1, int x2, int y2):

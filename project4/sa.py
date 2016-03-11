@@ -9,6 +9,7 @@ import numpy as np
 import sys
 import math
 import random
+import time
 
 
 def prim(G, r):
@@ -139,7 +140,7 @@ def three_opt(tour, n):
     return newtour
 
 
-def anneal(tour, cities):
+def anneal(tour, cities, start_time):
     """
     Performs simulated annealing on a given ordering of vertices (tour)
     in a graph (cities) with nodes on the XY plane.
@@ -152,7 +153,7 @@ def anneal(tour, cities):
     """
     ncities = len(cities)
     Tstart = 0.3                 # Starting temperature - has to be high enough
-    Tend = 0.1                   # Ending temperature - quit when reached
+    Tend = 0.1
     # fCool is Factor to multiply temperature at each cooling step
     # It is tuned to provide a good balance between performance and finding a
     # good approximation for problems sizes up to 20,000 nodes.
@@ -172,9 +173,15 @@ def anneal(tour, cities):
 
     # Store points to be swapped for a move
     n = np.zeros(6, dtype=int)
-    
+
+    # Set max run time in seconds (assignment allows for 180s total) 
+    max_time = 170
+
     T = Tstart       
-    while T > Tend:
+
+    #anneal until max_time reached, or solution doesn't improve
+    while (time.time() < start_time + max_time):   
+    #while T > Tend:   # uncomment this line to remove time restriction
         accepted = 0
 
         for i in xrange(maxSteps): # At each temperature, try several neighbor solutions
@@ -270,6 +277,9 @@ def plot_tour(T, cities, case):
 
 if __name__=='__main__':
 
+    # Get start time of run
+    start_time = time.time()
+
     # build dict of cities from file {city : (x,y)}
     infile = sys.argv[1] 
     case_name = sys.argv[1].split('/')[-1]
@@ -284,10 +294,10 @@ if __name__=='__main__':
     start_tour = two_approx(cities)  
 
     # now optimize the tour using simulated annealing
-    final_tour, cost = anneal(start_tour, cities)
+    final_tour, cost = anneal(start_tour, cities, start_time)
 
     # write solution to output
-    write_results("%s.out" % case_name, cost, final_tour)
+    write_results("%s.tour" % case_name, cost, final_tour)
 
     # plot
     if len(sys.argv) > 2 and sys.argv[2] == '-p':
